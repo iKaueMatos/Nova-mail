@@ -6,6 +6,5 @@ import com.email.email.modules.Mail.Domain.model.Email;
 
 public class NotificationEmailBody implements EmailFactory {
     @Override
-    public <T> Email createEmail(TemplateEmailType type, String to, String subject, T body) {
-    }
+    public <T> Email createEmail(TemplateEmailType type, String to, String subject, T body) { }
 }

@@ -1,4 +1,4 @@
-package com.email.email.modules.Mail.Infra.DTOs.order.vo;
+package com.email.email.modules.Mail.Application.order.DTOs.vo;
 
 import lombok.Data;
 

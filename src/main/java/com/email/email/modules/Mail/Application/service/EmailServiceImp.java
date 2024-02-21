@@ -20,8 +20,9 @@ public class EmailServiceImp implements EmailService {
     private JavaMailSender mailSender;
 
     @Autowired
-    public EmailServiceImp(EmailFactory emailFactory) {
+    public EmailServiceImp(EmailFactory emailFactory, JavaMailSender mailSender) {
         this.emailFactory = emailFactory;
+        this.mailSender = mailSender;
     }
 
     @Override
@@ -33,8 +34,9 @@ public class EmailServiceImp implements EmailService {
             helper.setTo(email.getTo());
             helper.setSubject(email.getSubject());
             helper.setText(email.getBody(), true);
+            log.info("Email enviado com sucesso! : {}" + email.getTo());
         } catch(MessagingException e) {
-            log.error("Ocorreu um erro ao enviar o email: {}", e.getMessage());
+            log.error("Ocorreu um erro ao enviar o email: {}" + email.getTo(), e.getMessage());
         }
     }
 }
