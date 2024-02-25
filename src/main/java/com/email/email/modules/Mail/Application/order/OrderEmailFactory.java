@@ -1,5 +1,6 @@
 package com.email.email.modules.Mail.Application.order;
 
+import java.lang.reflect.Field;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -11,6 +12,7 @@ import com.email.email.modules.Mail.Application.repository.EmailService;
 import com.email.email.modules.Mail.Domain.model.Email;
 import com.email.email.modules.Mail.Infra.order.OrderProcessingEmailContentStrategy;
 import com.email.email.modules.Mail.Infra.useCase.EmailContentStrategy;
+import com.email.email.util.reflection.FieldCopier;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -26,8 +28,11 @@ public class OrderEmailFactory implements EmailFactory {
                 case ORDER_PROCESSING:
                     return createOrderProcessingEmail(to, subject, (OrderEmailBody) body);
                 case ORDER_CONFIRMED:
-
+                    return createOrderConfirmedEmail(to, subject, (OrderEmailBody) body);
+                case ORDER_REFUSED:
+                    return createOrderRefused(to, subject, (OrderEmailBody) body);
                 default:
+                    log.error(subject, new IllegalAccessError("Tipo de e-mail não suportado!"));
                     throw new IllegalArgumentException("Tipo de e-mail não suportado: " + type);
             }
         }).orElseThrow(() -> new IllegalArgumentException("Tipo de e-mail não pode ser nulo"));
@@ -36,15 +41,9 @@ public class OrderEmailFactory implements EmailFactory {
     private Email createOrderProcessingEmail(String to, String subject, OrderEmailBody body) {
         OrderEmailBody filteredBody = new OrderEmailBody();
 
-        Stream<String> attributesStream = Stream.of(body.getOrderNumber(), body.getTotalValue());
-        attributesStream.filter(value -> value != null && !value.isEmpty())
-                .forEach(value -> {
-                    if (body.getOrderNumber() != null && body.getOrderNumber().equals(value)) {
-                        filteredBody.setOrderNumber(value);
-                    } else if (body.getTotalValue() != null && body.getTotalValue().equals(value)) {
-                        filteredBody.setTotalValue(value);
-                    }
-                });
+        if (body.getStatus() != null && body.getStatus().equalsIgnoreCase("em processamento")) {
+            FieldCopier.copyNonNullFields(body, filteredBody);
+        }
 
         EmailContentStrategy<OrderEmailBody> contentStrategy = new OrderProcessingEmailContentStrategy();
         String emailContent = contentStrategy.createContent(filteredBody);
@@ -52,10 +51,29 @@ public class OrderEmailFactory implements EmailFactory {
         return new Email(to, subject, emailContent);
     }
 
-    /**
-     * TODO -> criar função para geração de confirmação de pedido
-     */
     private Email createOrderConfirmedEmail(String to, String subject, OrderEmailBody body) {
+        OrderEmailBody filteredBody = new OrderEmailBody();
 
+        if (body.getStatus() != null && body.getStatus().equalsIgnoreCase("confirmado")) {
+            FieldCopier.copyNonNullFields(body, filteredBody);
+        }
+
+        EmailContentStrategy<OrderEmailBody> contentStrategy = new OrderProcessingEmailContentStrategy();
+        String emailContent = contentStrategy.createContent(filteredBody);
+
+        return new Email(to, subject, emailContent);
+    }
+
+    private Email createOrderRefused(String to, String subject, OrderEmailBody body) {
+        OrderEmailBody filteredBody = new OrderEmailBody();
+
+        if (body.getStatus() != null && body.getStatus().equalsIgnoreCase("recusado")) {
+            FieldCopier.copyNonNullFields(body, filteredBody);
+        }
+
+        EmailContentStrategy<OrderEmailBody> contentStrategy = new OrderProcessingEmailContentStrategy();
+        String emailContent = contentStrategy.createContent(filteredBody);
+
+        return new Email(to, subject, emailContent);
     }
 }
