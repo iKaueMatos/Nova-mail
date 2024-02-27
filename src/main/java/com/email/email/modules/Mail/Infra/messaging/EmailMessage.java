@@ -1,5 +1,7 @@
 package com.email.email.modules.Mail.Infra.messaging;
 
+import java.io.File;
+
 import com.email.email.common.Enum.mail.EmailPriority;
 import com.email.email.common.Enum.mail.TemplateEmailType;
 
@@ -12,4 +14,5 @@ public class EmailMessage<T> {
     private TemplateEmailType type;
     private String subject;
     private EmailPriority emailPriority;
+    private File attachment;
 }

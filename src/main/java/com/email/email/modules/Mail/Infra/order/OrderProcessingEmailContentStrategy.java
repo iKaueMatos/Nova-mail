@@ -4,6 +4,7 @@ import com.email.email.modules.Mail.Application.order.OrderEmailBody;
 import com.email.email.modules.Mail.Infra.useCase.EmailContentStrategy;
 
 public class OrderProcessingEmailContentStrategy implements EmailContentStrategy<OrderEmailBody> {
+    
     @Override
     public String createContent(OrderEmailBody filteredBody) {
         StringBuilder contentBuilder = new StringBuilder();

@@ -34,6 +34,7 @@ public class EmailServiceImp implements EmailService {
             helper.setTo(email.getTo());
             helper.setSubject(email.getSubject());
             helper.setText(email.getBody(), true);
+            // helper.setFileTypeMap(email.getBody());
             log.info("Email enviado com sucesso! : {}" + email.getTo());
         } catch(MessagingException e) {
             log.error("Ocorreu um erro ao enviar o email: {}" + email.getTo(), e.getMessage());
