@@ -17,5 +17,5 @@ public class OrderProcessingEmailContentStrategy implements EmailContentStrategy
         contentBuilder.append("Endereço de Entrega: ").append(filteredBody.getDeliveryAddress()).append("\n");
 
         return contentBuilder.toString();
-    }  
+    }
 }
