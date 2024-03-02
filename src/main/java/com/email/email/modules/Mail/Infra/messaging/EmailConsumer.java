@@ -1,5 +1,7 @@
 package com.email.email.modules.Mail.Infra.messaging;
 
+import java.io.IOException;
+
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -20,7 +22,7 @@ public class EmailConsumer {
     }
 
     @RabbitListener(queues = "email-queue")
-    public void processEmail(EmailMessage emailMessage) {
+    public void processEmail(EmailMessage emailMessage) throws IOException {
         Email email = emailFactory.createEmail(
             emailMessage.getType(),
             emailMessage.getTo(),
