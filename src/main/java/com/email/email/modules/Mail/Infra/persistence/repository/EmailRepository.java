@@ -1,0 +1,7 @@
+package com.email.email.modules.Mail.Infra.persistence.repository;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.email.email.modules.Mail.Infra.persistence.entity.EmailEntity;
+
+public interface EmailRepository extends JpaRepository<EmailEntity, Long> { }

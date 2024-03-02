@@ -1,7 +1,5 @@
 package com.email.email.modules.Mail.Application.order;
 
-import java.util.Optional;
-
 import com.email.email.common.Enum.mail.TemplateEmailType;
 import com.email.email.modules.Mail.Application.factory.EmailFactory;
 import com.email.email.modules.Mail.Domain.model.Email;
@@ -16,102 +14,41 @@ public class OrderEmailFactory implements EmailFactory {
 
     @Override
     public <T> Email createEmail(TemplateEmailType type, String to, String subject, T body) {
-        return Optional.ofNullable(type).map(template -> {
-            switch (template) {
-                case ORDER_PROCESSING:
-                    return createOrderProcessingEmail(to, subject, (OrderEmailBody) body);
-                case ORDER_CONFIRMED:
-                    return createOrderConfirmedEmail(to, subject, (OrderEmailBody) body);
-                case ORDER_REFUSED:
-                    return createOrderRefused(to, subject, (OrderEmailBody) body);
-                case ORDER_SHIPPED:
-                    return createOrderShippedEmail(to, subject, (OrderEmailBody) body);
-                case ORDER_DELIVERED:
-                    return createOrderDeliveredEmail(to, subject, (OrderEmailBody) body);
-                case ORDER_CANCELED:
-                    return createOrderCanceledEmail(to, subject, (OrderEmailBody) body);
-                default:
-                    log.error(subject, new IllegalAccessError("Tipo de e-mail não suportado!"));
-                    throw new IllegalArgumentException("Tipo de e-mail não suportado: " + type);
-            }
-        }).orElseThrow(() -> new IllegalArgumentException("Tipo de e-mail não pode ser nulo"));
-    }
-
-    private Email createOrderProcessingEmail(String to, String subject, OrderEmailBody body) {
-        OrderEmailBody filteredBody = new OrderEmailBody();
-
-        if (body.getStatus() != null && body.getStatus().equalsIgnoreCase("em processamento")) {
-            FieldCopier.copyNonNullFields(body, filteredBody);
+        if (type == null) {
+            throw new IllegalArgumentException("Tipo de e-mail não pode ser nulo");
         }
 
-        EmailContentStrategy<OrderEmailBody> contentStrategy = new OrderProcessingEmailContentStrategy();
-        String emailContent = contentStrategy.createContent(filteredBody);
+        OrderEmailBody orderBody = (OrderEmailBody) body;
 
-        return new Email(to, subject, emailContent);
+        EmailContentStrategy<OrderEmailBody> contentStrategy = new OrderProcessingEmailContentStrategy();
+        String emailContent = contentStrategy.createContent(orderBody);
+
+        switch (type) {
+            case ORDER_PROCESSING:
+                return createOrderEmail(to, subject, orderBody, "em processamento", emailContent);
+            case ORDER_CONFIRMED:
+                return createOrderEmail(to, subject, orderBody, "pagamento confirmado", emailContent);
+            case ORDER_REFUSED:
+                return createOrderEmail(to, subject, orderBody, "pagamento recusado", emailContent);
+            case ORDER_SHIPPED:
+                return createOrderEmail(to, subject, orderBody, "enviado", emailContent);
+            case ORDER_DELIVERED:
+                return createOrderEmail(to, subject, orderBody, "entregue", emailContent);
+            case ORDER_CANCELED:
+                return createOrderEmail(to, subject, orderBody, "cancelado", emailContent);
+            default:
+                log.error(subject, new IllegalAccessError("Tipo de e-mail não suportado!"));
+                throw new IllegalArgumentException("Tipo de e-mail não suportado: " + type);
+        }
     }
 
-    private Email createOrderConfirmedEmail(String to, String subject, OrderEmailBody body) {
-        OrderEmailBody filteredBody = new OrderEmailBody();
-
-        if (body.getStatus() != null && body.getStatus().equalsIgnoreCase("pagamento confirmado")) {
+    private Email createOrderEmail(String to, String subject, OrderEmailBody body, String status, String emailContent) {
+        if (body.getStatus() != null && body.getStatus().equalsIgnoreCase(status)) {
+            OrderEmailBody filteredBody = new OrderEmailBody();
             FieldCopier.copyNonNullFields(body, filteredBody);
+            return new Email(to, subject, emailContent);
+        } else {
+            throw new IllegalArgumentException("Status do pedido não corresponde ao tipo de e-mail");
         }
-
-        EmailContentStrategy<OrderEmailBody> contentStrategy = new OrderProcessingEmailContentStrategy();
-        String emailContent = contentStrategy.createContent(filteredBody);
-
-        return new Email(to, subject, emailContent);
-    }
-
-    private Email createOrderRefused(String to, String subject, OrderEmailBody body) {
-        OrderEmailBody filteredBody = new OrderEmailBody();
-
-        if (body.getStatus() != null && body.getStatus().equalsIgnoreCase("pagamento recusado")) {
-            FieldCopier.copyNonNullFields(body, filteredBody);
-        }
-
-        EmailContentStrategy<OrderEmailBody> contentStrategy = new OrderProcessingEmailContentStrategy();
-        String emailContent = contentStrategy.createContent(filteredBody);
-
-        return new Email(to, subject, emailContent);
-    }
-
-    private Email createOrderShippedEmail(String to, String subject, OrderEmailBody body) {
-        OrderEmailBody filteredBody = new OrderEmailBody();
-    
-        if (body.getStatus() != null && body.getStatus().equalsIgnoreCase("enviado")) {
-            FieldCopier.copyNonNullFields(body, filteredBody);
-        }
-    
-        EmailContentStrategy<OrderEmailBody> contentStrategy = new OrderProcessingEmailContentStrategy();
-        String emailContent = contentStrategy.createContent(filteredBody);
-    
-        return new Email(to, subject, emailContent);
-    }
-    
-    private Email createOrderDeliveredEmail(String to, String subject, OrderEmailBody body) {
-        OrderEmailBody filteredBody = new OrderEmailBody();
-    
-        if (body.getStatus() != null && body.getStatus().equalsIgnoreCase("entregue")) {
-            FieldCopier.copyNonNullFields(body, filteredBody);
-        }
-    
-        EmailContentStrategy<OrderEmailBody> contentStrategy = new OrderProcessingEmailContentStrategy();
-        String emailContent = contentStrategy.createContent(filteredBody);
-    
-        return new Email(to, subject, emailContent);
-    }
-    
-    private Email createOrderCanceledEmail(String to, String subject, OrderEmailBody body) {
-        OrderEmailBody filteredBody = new OrderEmailBody();
-    
-        if (body.getStatus() != null && body.getStatus().equalsIgnoreCase("cancelado")) {
-            FieldCopier.copyNonNullFields(body, filteredBody);
-        }
-    
-        EmailContentStrategy<OrderEmailBody> contentStrategy = new OrderProcessingEmailContentStrategy();
-        String emailContent = contentStrategy.createContent(filteredBody);
-    
-        return new Email(to, subject, emailContent);
     }
 }

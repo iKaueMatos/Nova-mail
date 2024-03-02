@@ -5,6 +5,7 @@ import java.util.Optional;
 import com.email.email.common.Enum.mail.TemplateEmailType;
 import com.email.email.modules.Mail.Application.factory.EmailFactory;
 import com.email.email.modules.Mail.Domain.model.Email;
+import com.email.email.modules.Mail.Infra.notification.NotificationProcessingEmailHtmlContentStrategy;
 import com.email.email.modules.Mail.Infra.notification.NotificationProcessingEmailSimpleContentStrategy;
 import com.email.email.modules.Mail.Infra.notification.NotificationProcessingEmailWithAttachmentContentStrategy;
 import com.email.email.modules.Mail.Infra.useCase.EmailContentStrategy;
@@ -19,7 +20,7 @@ public class NotificationEmailFactory implements EmailFactory {
                 case SIMPLE:
                     return createWith_Attachment(to, subject, (NotificationEmailBody) body);
                 case HTML:
-                    return null;
+                    return createHTMLEmail(to, subject, (NotificationEmailBody) body);
                 default:
                     throw new IllegalArgumentException("Tipo de e-mail não suportado: " + type);
             }
@@ -39,5 +40,10 @@ public class NotificationEmailFactory implements EmailFactory {
         return new Email(to, subject, emailContent);
     }
 
-    /* private Email */
+    private Email createHTMLEmail(String to, String subject, NotificationEmailBody body) {
+        EmailContentStrategy<NotificationEmailBody> contentStrategy = new NotificationProcessingEmailHtmlContentStrategy();
+        String emailContent = contentStrategy.createContent(body);
+        
+        return new Email(to, subject, emailContent);
+    }
 }

@@ -2,7 +2,7 @@ package com.email.email.modules.Mail.Application.order;
 
 import java.util.List;
 
-import com.email.email.modules.Mail.Application.order.DTOs.vo.OrderItem;
+import com.email.email.modules.Mail.Application.DTOs.order.OrderItem;
 
 import lombok.Data;
 

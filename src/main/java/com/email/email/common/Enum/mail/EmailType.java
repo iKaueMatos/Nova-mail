@@ -4,5 +4,4 @@ public enum EmailType {
     ORDER,
     TRANSACTION,
     AUTH,
-    STOCK
 }
