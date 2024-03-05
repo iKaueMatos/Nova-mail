@@ -1,3 +1,10 @@
+/**
+ * ----------------------------------------------------------------------------
+ * Autor: Kaue de Matos
+ * Empresa: Nova Software
+ * Propriedade da Empresa: Todos os direitos reservados
+ * ----------------------------------------------------------------------------
+ */
 package com.email.email.modules.Mail.Application.service;
 
 import java.io.IOException;
@@ -11,8 +18,9 @@ import com.email.email.modules.Mail.Application.factory.EmailFactory;
 import com.email.email.modules.Mail.Application.repository.EmailService;
 import com.email.email.modules.Mail.Domain.model.Email;
 
+import jakarta.activation.DataHandler;
 import jakarta.activation.DataSource;
-import jakarta.mail.BodyPart;
+import jakarta.activation.FileDataSource;
 import jakarta.mail.MessagingException;
 import jakarta.mail.Multipart;
 import jakarta.mail.Transport;
@@ -37,24 +45,30 @@ public class EmailServiceImp implements EmailService {
     public void sendEmail(Email email) throws IOException {
         try {
             MimeMessage message = mailSender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(message, "utf-8");
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "utf-8");
 
             helper.setTo(email.getTo());
             helper.setSubject(email.getSubject());
             helper.setText(email.getBody(), true);
-            
-            BodyPart messageBodyPart = new MimeBodyPart();
+
             Multipart multipart = new MimeMultipart();
 
+            MimeBodyPart messageBodyPart = new MimeBodyPart();
+            messageBodyPart.setContent(email.getBody(), "text/html");
             multipart.addBodyPart(messageBodyPart);
-            
-            MimeBodyPart helperPDF = new MimeBodyPart();
-            helperPDF.attachFile(email.getAttachFile() != null ? email.getAttachFile() : null);
-            helper.addAttachment(helperPDF.getFileName(), (DataSource) helperPDF);
+
+            if (email.getAttachFile() != null) {
+                MimeBodyPart attachPart = new MimeBodyPart();
+                DataSource source = new FileDataSource(email.getAttachFile());
+                attachPart.setDataHandler(new DataHandler(source));
+                attachPart.setFileName(email.getAttachFile().getName());
+                multipart.addBodyPart(attachPart);
+            }
+
+            message.setContent(multipart);
 
             Transport.send(message);
-            log.info("Email enviado com sucesso! : {}" + email.getTo());
-        } catch(MessagingException e) {
+        } catch (MessagingException e) {
             log.error("Ocorreu um erro ao enviar o email: {}" + email.getTo(), e.getMessage());
         }
     }

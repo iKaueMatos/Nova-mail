@@ -1,3 +1,10 @@
+/**
+ * ----------------------------------------------------------------------------
+ * Autor: Kaue de Matos
+ * Empresa: Nova Software
+ * Propriedade da Empresa: Todos os direitos reservados
+ * ----------------------------------------------------------------------------
+ */
 package com.email.email.common.Enum.mail;
 
 public enum TemplateEmailType {
@@ -11,6 +18,7 @@ public enum TemplateEmailType {
     AUTH_RESET_PASSWORD,
     AUTH_USER_CREATED,
     AUTH_USER_UPDATE,
+    AUTH_USER_TOKEN_RESET_PASSWORD,
     TRANSACTION_PROCESSING,
     TRANSACTION_CONCLUDED,
     TRANSACTION_REFUSED,

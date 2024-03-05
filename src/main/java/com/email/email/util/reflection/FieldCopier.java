@@ -1,11 +1,15 @@
+/**
+ * ----------------------------------------------------------------------------
+ * Autor: Kaue de Matos
+ * Empresa: Nova Software
+ * Propriedade da Empresa: Todos os direitos reservados
+ * ----------------------------------------------------------------------------
+ */
 package com.email.email.util.reflection;
 
 import java.lang.reflect.Field;
 import java.util.stream.Stream;
 
-/**
- * ReflectionUtils
- */
 public class FieldCopier {
     public static void copyNonNullFields(Object source, Object target) {
         Field[] fields = source.getClass().getDeclaredFields();

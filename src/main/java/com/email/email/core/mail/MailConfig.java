@@ -1,3 +1,10 @@
+/**
+ * ----------------------------------------------------------------------------
+ * Autor: Kaue de Matos
+ * Empresa: Nova Software
+ * Propriedade da Empresa: Todos os direitos reservados
+ * ----------------------------------------------------------------------------
+ */
 package com.email.email.core.mail;
 
 import java.util.Properties;
@@ -38,9 +45,4 @@ public class MailConfig {
 
         return mailSender;
     }
-
-    // @Bean
-    // public EmailSenderService emailSenderServiceMail(JavaMailSender javaMailSender) {
-    //     return new EmailSenderService(javaMailSender, null, null, null);
-    // }
 }

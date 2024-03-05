@@ -5,19 +5,18 @@
  * Propriedade da Empresa: Todos os direitos reservados
  * ----------------------------------------------------------------------------
  */
-package com.email.email.common.Enum.mail;
+package com.email.email.common.Enum.transaction;
 
 import java.util.Optional;
 
-public enum SendStatus {
-    SENT(1),
-    NOT_SENT(2),
-    PENDING(3),
-    FAILED(4);
+public enum MethodPayment {
+    CARD_CREDIT(1),
+    TICKET(2),
+    PIX(3);
 
     private final int value;
 
-    SendStatus(int value) {
+    MethodPayment(int value) {
         this.value = value;
     }
 
@@ -25,9 +24,9 @@ public enum SendStatus {
         return value;
     }
 
-    public static SendStatus fromValue(int value) {
-        Optional<SendStatus> matchingStatus = Optional.empty();
-        for (SendStatus status : SendStatus.values()) {
+    public static MethodPayment MethodPaymentStatus(int value) {
+        Optional<MethodPayment> matchingStatus = Optional.empty();
+        for (MethodPayment status : MethodPayment.values()) {
             if (status.value == value) {
                 matchingStatus = Optional.of(status);
                 break;
