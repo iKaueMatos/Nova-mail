@@ -25,7 +25,7 @@ public enum SendStatus {
         return value;
     }
 
-    public static SendStatus fromValue(int value) {
+    public static SendStatus getStatusSendString(int value) {
         Optional<SendStatus> matchingStatus = Optional.empty();
         for (SendStatus status : SendStatus.values()) {
             if (status.value == value) {

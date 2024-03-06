@@ -24,7 +24,7 @@ public enum MethodPayment {
         return value;
     }
 
-    public static MethodPayment MethodPaymentStatus(int value) {
+    public static MethodPayment methodPaymentStatus(int value) {
         Optional<MethodPayment> matchingStatus = Optional.empty();
         for (MethodPayment status : MethodPayment.values()) {
             if (status.value == value) {

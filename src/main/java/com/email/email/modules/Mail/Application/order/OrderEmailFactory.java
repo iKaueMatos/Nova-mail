@@ -25,26 +25,28 @@ public class OrderEmailFactory implements EmailFactory {
         String emailContent = contentStrategy.createContent(orderBody);
 
         switch (type) {
+            case ORDER_PENDING:
+                return createOrderEmail(to, subject, orderBody, 1, emailContent);
             case ORDER_PROCESSING:
-                return createOrderEmail(to, subject, orderBody, "em processamento", emailContent);
+                return createOrderEmail(to, subject, orderBody, 1, emailContent);
             case ORDER_CONFIRMED:
-                return createOrderEmail(to, subject, orderBody, "pagamento confirmado", emailContent);
+                return createOrderEmail(to, subject, orderBody, 2, emailContent);
             case ORDER_REFUSED:
-                return createOrderEmail(to, subject, orderBody, "pagamento recusado", emailContent);
+                return createOrderEmail(to, subject, orderBody, 3, emailContent);
             case ORDER_SHIPPED:
-                return createOrderEmail(to, subject, orderBody, "enviado", emailContent);
+                return createOrderEmail(to, subject, orderBody, 4, emailContent);
             case ORDER_DELIVERED:
-                return createOrderEmail(to, subject, orderBody, "entregue", emailContent);
+                return createOrderEmail(to, subject, orderBody, 5, emailContent);
             case ORDER_CANCELED:
-                return createOrderEmail(to, subject, orderBody, "cancelado", emailContent);
+                return createOrderEmail(to, subject, orderBody, 6, emailContent);
             default:
                 log.error(subject, new IllegalAccessError("Tipo de e-mail não suportado!"));
                 throw new IllegalArgumentException("Tipo de e-mail não suportado: " + type);
         }
     }
 
-    private Email createOrderEmail(String to, String subject, OrderEmailBody body, String status, String emailContent) {
-        if (body.getStatus() != null && body.getStatus().equalsIgnoreCase(status)) {
+    private Email createOrderEmail(String to, String subject, OrderEmailBody body, int status, String emailContent) {
+        if (body.getStatus() != null) {
             OrderEmailBody filteredBody = new OrderEmailBody();
             FieldCopier.copyNonNullFields(body, filteredBody);
             return new Email(to, subject, emailContent);
